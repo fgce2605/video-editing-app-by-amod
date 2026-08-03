@@ -40,7 +40,7 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '21'
-          
+
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
@@ -69,6 +69,16 @@ jobs:
 
       - name: Sync Capacitor
         run: npx cap sync android
+
+      - name: Exclude duplicate Kotlin stdlib modules
+        run: |
+          cat >> android/app/build.gradle.kts << 'EOF'
+
+          configurations.all {
+              exclude(group = "org.jetbrains.kotlin", module = "kotlin-stdlib-jdk7")
+              exclude(group = "org.jetbrains.kotlin", module = "kotlin-stdlib-jdk8")
+          }
+          EOF
 
       - name: Generate debug keystore
         run: |
