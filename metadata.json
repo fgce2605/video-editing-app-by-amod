@@ -1,0 +1,6 @@
+{
+  "name": "ProEdit Studio",
+  "description": "Professional multi-track video editing studio with live canvas preview, audio mixing, AI subtitles, color grading, and MediaRecorder export.",
+  "requestFramePermissions": ["microphone", "camera"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
