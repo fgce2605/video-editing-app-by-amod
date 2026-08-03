@@ -27,6 +27,8 @@ interface TopNavbarProps {
   onOpenExport: () => void;
   onOpenBatchQueue: () => void;
   isSaving?: boolean;
+  onTriggerInstall?: () => void;
+  isInstalled?: boolean;
 }
 
 export const TopNavbar: React.FC<TopNavbarProps> = ({
@@ -41,6 +43,8 @@ export const TopNavbar: React.FC<TopNavbarProps> = ({
   onOpenExport,
   onOpenBatchQueue,
   isSaving,
+  onTriggerInstall,
+  isInstalled,
 }) => {
   return (
     <header className="bg-slate-900 border-b border-slate-800 text-white px-4 py-2.5 flex items-center justify-between shadow-md select-none z-30">
@@ -151,6 +155,18 @@ export const TopNavbar: React.FC<TopNavbarProps> = ({
 
       {/* Right: Actions */}
       <div className="flex items-center gap-2">
+        {/* PWA Native Install Button */}
+        {onTriggerInstall && !isInstalled && (
+          <button
+            onClick={onTriggerInstall}
+            className="bg-red-950/80 hover:bg-red-900 border border-red-600/80 text-red-100 px-2.5 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 shadow-sm transition-all cursor-pointer active:scale-95"
+            title="Install ProEdit Studio PWA App"
+          >
+            <Download className="w-3.5 h-3.5 text-red-400" />
+            <span className="hidden sm:inline">Install App</span>
+          </button>
+        )}
+
         {/* Prominent ALWAYS-VISIBLE Import Media Button */}
         <button
           onClick={onOpenImport}

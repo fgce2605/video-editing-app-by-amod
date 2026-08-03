@@ -10,8 +10,12 @@ import { Timeline } from './components/Timeline';
 import { VoiceoverRecorderModal } from './components/VoiceoverRecorderModal';
 import { ExportModal } from './components/ExportModal';
 import { AIToolsDrawer } from './components/AIToolsDrawer';
+import { PWAInstallPrompt } from './components/PWAInstallPrompt';
+import { usePWA } from './hooks/usePWA';
 
 export default function App() {
+  const pwa = usePWA();
+
   // Main Project State
   const [project, setProject] = useState<Project>(() => loadProjectFromStorage());
   const [currentTime, setCurrentTime] = useState<number>(0);
@@ -565,6 +569,8 @@ export default function App() {
         onOpenExport={() => setIsExportModalOpen(true)}
         onOpenBatchQueue={() => setIsExportModalOpen(true)}
         isSaving={isSaving}
+        onTriggerInstall={pwa.triggerInstall}
+        isInstalled={pwa.isInstalled}
       />
 
       {/* Middle Section: Live Video Preview Monitor */}
@@ -645,6 +651,16 @@ export default function App() {
         onColorCorrect={handleAIColorCorrect}
         onGenerateTTS={handleAITTS}
         onGenerateHighlights={handleAIHighlights}
+      />
+
+      {/* PWA Install & Offline Status Prompt */}
+      <PWAInstallPrompt
+        onTriggerInstall={pwa.triggerInstall}
+        isInstallable={pwa.isInstallable}
+        isInstalled={pwa.isInstalled}
+        isOffline={pwa.isOffline}
+        needRefresh={pwa.needRefresh}
+        onReloadApp={pwa.reloadApp}
       />
     </div>
   );
