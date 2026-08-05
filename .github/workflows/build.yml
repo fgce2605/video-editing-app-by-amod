@@ -1,38 +1,4 @@
-name: Build Web and APK
-
-on:
-  push:
-    branches: [ main ]
-  workflow_dispatch:
-
-permissions:
-  contents: write
-
-jobs:
-  build-web:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Build web app
-        run: npm run build
-
-      - name: Upload web build artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: web-build
-          path: dist
-
-  build-apk:
+build-apk:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -92,6 +58,9 @@ jobs:
           }
           EOF
 
+      - name: Verify build.gradle.kts content
+        run: cat android/build.gradle.kts
+
       - name: Generate debug keystore
         run: |
           if [ ! -f "debug.keystore" ]; then
@@ -105,9 +74,10 @@ jobs:
         uses: gradle/actions/setup-gradle@v3
         with:
           gradle-version: '9.6.1'
+          cache-disabled: true
 
       - name: Build Debug APK
-        run: gradle assembleDebug
+        run: gradle assembleDebug --no-configuration-cache
         working-directory: ./android
 
       - name: Upload APK artifact
