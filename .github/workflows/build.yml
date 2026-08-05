@@ -75,20 +75,19 @@ jobs:
       - name: Sync Capacitor
         run: npx cap sync android
 
-      - name: Substitute duplicate Kotlin stdlib modules
+      - name: Create global Kotlin stdlib fix init script
         run: |
-          cat >> android/app/build.gradle.kts << 'EOF'
-
-          configurations.all {
-              resolutionStrategy.dependencySubstitution {
-                  substitute(module("org.jetbrains.kotlin:kotlin-stdlib-jdk7")).using(module("org.jetbrains.kotlin:kotlin-stdlib:1.8.22"))
-                  substitute(module("org.jetbrains.kotlin:kotlin-stdlib-jdk8")).using(module("org.jetbrains.kotlin:kotlin-stdlib:1.8.22"))
+          cat > kotlin-fix.init.gradle.kts << 'EOF'
+          allprojects {
+              configurations.all {
+                  resolutionStrategy.dependencySubstitution {
+                      substitute(module("org.jetbrains.kotlin:kotlin-stdlib-jdk7")).using(module("org.jetbrains.kotlin:kotlin-stdlib:1.8.22"))
+                      substitute(module("org.jetbrains.kotlin:kotlin-stdlib-jdk8")).using(module("org.jetbrains.kotlin:kotlin-stdlib:1.8.22"))
+                  }
               }
           }
           EOF
-
-      - name: Verify app/build.gradle.kts content
-        run: cat android/app/build.gradle.kts
+          cat kotlin-fix.init.gradle.kts
 
       - name: Generate debug keystore
         run: |
@@ -106,7 +105,7 @@ jobs:
           cache-disabled: true
 
       - name: Build Debug APK
-        run: gradle assembleDebug --no-configuration-cache
+        run: gradle assembleDebug --no-configuration-cache --init-script=../kotlin-fix.init.gradle.kts
         working-directory: ./android
 
       - name: Upload APK artifact
